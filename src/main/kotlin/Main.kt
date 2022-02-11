@@ -5,8 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
@@ -24,27 +24,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.skia.Image
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
 import java.net.URL
 
+/**
+ * @param key 触发compose重组
+ */
 @Composable
-fun <T> AsyncImage(
-    load: suspend () -> T,
+fun <K, T> AsyncImage(
+    key: K? = null,
+    load: suspend (K?) -> T,
     painterFor: @Composable (T) -> Painter,
     contentDescription: String,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
 ) {
-    val image: T? by produceState<T?>(null) {
-        value = withContext(Dispatchers.IO) {
-            tryOrNull { load() }
+    val testImage = remember { mutableStateOf<T?>(null) }
+    LaunchedEffect(key) {
+        testImage.value = withContext(Dispatchers.IO) {
+            tryOrNull { load(key) }
         }
     }
     Image(
-        painter = image?.let {
+        painter = testImage.value?.let {
             painterFor(it)
         } ?: run {
             BitmapPainter(
@@ -83,17 +91,16 @@ fun StoreItemCard(
                 .background(MaterialTheme.colors.background, RoundedCornerShape(4.dp))
         ) {
             AsyncImage(
+                key = appIcon,
                 load = {
                     tryOrNull {
-                        appIcon?.let { loadImageBitmap(it) }
+                        it?.let { it1 -> loadImageBitmap(it1) }
                     }
                 },
                 painterFor = {
-                    remember {
-                        BitmapPainter(
-                            it!!
-                        )
-                    }
+                    BitmapPainter(
+                        it!!
+                    )
                 },
                 contentDescription = "$appName 的应用图标",
                 modifier = Modifier.width(60.dp).height(60.dp).background(MaterialTheme.colors.surface)
@@ -112,15 +119,14 @@ fun App() {
     val mainViewModel = remember {
         MainViewModel().apply { switchList(0) }
     }
-    var text by remember { mutableStateOf("Hello, World!") }
 
     val appList = mainViewModel.appList.collectAsState()
 
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             Column {
-                Row {
-                    mainViewModel.categories.forEachIndexed { index, pair ->
+                LazyRow {
+                    items(mainViewModel.categories.size) { index ->
                         Spacer(modifier = Modifier.width(if (index == 0) 16.dp else 8.dp))
                         Button(
                             onClick = { mainViewModel.switchList(index) },
@@ -150,7 +156,7 @@ fun App() {
                                 }
                             }
                         ) {
-                            Text(pair.second)
+                            Text(mainViewModel.categories[index].second)
                         }
                     }
                 }
