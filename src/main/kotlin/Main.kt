@@ -2,6 +2,7 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,7 +23,9 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.awt.Desktop
 import java.io.File
+import java.net.URI
 import java.net.URL
 
 @Composable
@@ -65,16 +68,17 @@ fun loadImageBitmap(url: String): ImageBitmap =
 @Composable
 @Preview
 fun StoreItemCard(
+    modifier: Modifier = Modifier,
     appIcon: String? = null,
     appName: String = "应用名",
     description: String = "",
-    onClick: (() -> Unit)? = null
 ) {
-    Box {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp, 8.dp, 16.dp, 8.dp)
-            .background(MaterialTheme.colors.background, RoundedCornerShape(4.dp))
+    Box(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, 8.dp, 16.dp, 8.dp)
+                .background(MaterialTheme.colors.background, RoundedCornerShape(4.dp))
         ) {
             AsyncImage(
                 load = {
@@ -127,6 +131,15 @@ fun App() {
                     items(appList.value.size) { index ->
                         val item = appList.value[index]
                         StoreItemCard(
+                            modifier = Modifier.clickable {
+                                if (Desktop.isDesktopSupported() && Desktop.getDesktop()
+                                        .isSupported(Desktop.Action.BROWSE)
+                                ) {
+                                    tryOrNull {
+                                        Desktop.getDesktop().browse(URI(item.website))
+                                    }
+                                }
+                            },
                             appIcon = item.icons,
                             appName = item.name,
                             description = item.description,
