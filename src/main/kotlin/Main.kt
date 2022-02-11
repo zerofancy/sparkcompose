@@ -9,10 +9,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
@@ -107,27 +109,56 @@ fun StoreItemCard(
 @Composable
 @Preview
 fun App() {
-    val mainViewModel = MainViewModel()
+    val mainViewModel = remember {
+        MainViewModel().apply { switchList(0) }
+    }
     var text by remember { mutableStateOf("Hello, World!") }
 
     val appList = mainViewModel.appList.collectAsState()
 
     MaterialTheme {
-        val scrollState = rememberScrollState()
         Box(modifier = Modifier.fillMaxSize()) {
-            Row {
+            Column {
+                Row {
+                    mainViewModel.categories.forEachIndexed { index, pair ->
+                        Spacer(modifier = Modifier.width(if (index == 0) 16.dp else 8.dp))
+                        Button(
+                            onClick = { mainViewModel.switchList(index) },
+                            colors = object : ButtonColors {
+                                val currentIndex = mainViewModel.currentIndex.collectAsState()
+
+                                @Composable
+                                override fun backgroundColor(enabled: Boolean): State<Color> {
+                                    return rememberUpdatedState(
+                                        if (index == currentIndex.value) {
+                                            MaterialTheme.colors.primary
+                                        } else {
+                                            MaterialTheme.colors.onPrimary
+                                        }
+                                    )
+                                }
+
+                                @Composable
+                                override fun contentColor(enabled: Boolean): State<Color> {
+                                    return rememberUpdatedState(
+                                        if (index == currentIndex.value) {
+                                            MaterialTheme.colors.onPrimary
+                                        } else {
+                                            MaterialTheme.colors.primary
+                                        }
+                                    )
+                                }
+                            }
+                        ) {
+                            Text(pair.second)
+                        }
+                    }
+                }
                 val mainLazyListState = rememberLazyListState()
                 LazyColumn(
                     modifier = Modifier,
                     state = mainLazyListState,
                 ) {
-                    item {
-                        Button(onClick = {
-                            mainViewModel.switchList()
-                        }) {
-                            Text(text)
-                        }
-                    }
                     items(appList.value.size) { index ->
                         val item = appList.value[index]
                         StoreItemCard(
@@ -145,23 +176,20 @@ fun App() {
                             description = item.description,
                         )
                     }
-                    item {
-                        Text("已经是最后了～～～～～～～～～～～～～～～")
-                    }
                 }
                 // 这些信息加起来能实现一个简单滚动条
-                Text(mainLazyListState.firstVisibleItemIndex.toString())
-                Spacer(Modifier.width(4.dp))
-                Text(mainLazyListState.layoutInfo.visibleItemsInfo.size.toString())
-                Spacer(Modifier.width(4.dp))
-                Text(mainLazyListState.layoutInfo.totalItemsCount.toString())
-
-                Spacer(Modifier.width(4.dp))
-                Text(mainLazyListState.firstVisibleItemScrollOffset.toString())
-                Spacer(Modifier.width(4.dp))
-                Text(mainLazyListState.layoutInfo.viewportStartOffset.toString())
-                Spacer(Modifier.width(4.dp))
-                Text(mainLazyListState.layoutInfo.viewportEndOffset.toString())
+//                Text(mainLazyListState.firstVisibleItemIndex.toString())
+//                Spacer(Modifier.width(4.dp))
+//                Text(mainLazyListState.layoutInfo.visibleItemsInfo.size.toString())
+//                Spacer(Modifier.width(4.dp))
+//                Text(mainLazyListState.layoutInfo.totalItemsCount.toString())
+//
+//                Spacer(Modifier.width(4.dp))
+//                Text(mainLazyListState.firstVisibleItemScrollOffset.toString())
+//                Spacer(Modifier.width(4.dp))
+//                Text(mainLazyListState.layoutInfo.viewportStartOffset.toString())
+//                Spacer(Modifier.width(4.dp))
+//                Text(mainLazyListState.layoutInfo.viewportEndOffset.toString())
             }
         }
     }
