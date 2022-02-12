@@ -1,8 +1,10 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -125,7 +127,22 @@ fun App() {
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             Column {
-                LazyRow {
+                val categoryListState = rememberLazyListState()
+                val scrollDelta = remember { mutableStateOf(0f) }
+
+                LaunchedEffect(scrollDelta.value) {
+                    val offset = scrollDelta.value.takeIf { it != 0f } ?: return@LaunchedEffect
+                    val consumed = categoryListState.scrollBy(-offset)
+                    scrollDelta.value -= consumed
+                }
+                val categoryDragState = rememberDraggableState { delta ->
+                    scrollDelta.value = delta
+                }
+                LazyRow(
+                    modifier = Modifier
+                        .draggable(categoryDragState, Orientation.Horizontal),
+                    state = categoryListState
+                ) {
                     items(mainViewModel.categories.size) { index ->
                         Spacer(modifier = Modifier.width(if (index == 0) 16.dp else 8.dp))
                         Button(
@@ -183,28 +200,18 @@ fun App() {
                         )
                     }
                 }
-                // 这些信息加起来能实现一个简单滚动条
-//                Text(mainLazyListState.firstVisibleItemIndex.toString())
-//                Spacer(Modifier.width(4.dp))
-//                Text(mainLazyListState.layoutInfo.visibleItemsInfo.size.toString())
-//                Spacer(Modifier.width(4.dp))
-//                Text(mainLazyListState.layoutInfo.totalItemsCount.toString())
-//
-//                Spacer(Modifier.width(4.dp))
-//                Text(mainLazyListState.firstVisibleItemScrollOffset.toString())
-//                Spacer(Modifier.width(4.dp))
-//                Text(mainLazyListState.layoutInfo.viewportStartOffset.toString())
-//                Spacer(Modifier.width(4.dp))
-//                Text(mainLazyListState.layoutInfo.viewportEndOffset.toString())
             }
         }
     }
 }
 
 fun main() = application {
-    Window(onCloseRequest = {
-        exitApplication()
-    }) {
+    Window(
+        onCloseRequest = {
+            exitApplication()
+        },
+        title = "Spark Compose",
+    ) {
         App()
     }
 }
