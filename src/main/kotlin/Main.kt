@@ -13,18 +13,25 @@ import androidx.compose.ui.window.application
 fun App() {
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize()) {
-            val detailData = remember { mutableStateOf<AppListItem?>(null) }
-            println("main ${detailData.value}")
-            detailData.value?.let {
-                println("value is $it")
-                AppDetailPage(it)
-            }?: kotlin.run {
-                println("browse")
-                CategoryBrowse {
-                    detailData.value = it
+            val detailData = remember { mutableStateOf<Pair<String, AppListItem>?>(null) }
+            val data = detailData.value
+            if (data!=null) {
+                AppDetailPage(data.first, data.second) {
+                    detailData.value = null
+                }
+            } else {
+                CategoryBrowse { category, item ->
+                    detailData.value = category to item
                 }
             }
-            println("main2")
+            // 这种写法有问题，但我不知道为什么 https://github.com/JetBrains/compose-jb/issues/1830
+//            data?.let {
+//                AppDetailPage(it)
+//            }?: kotlin.run {
+//                CategoryBrowse {
+//                    detailData.value = it
+//                }
+//            }
         }
     }
 }

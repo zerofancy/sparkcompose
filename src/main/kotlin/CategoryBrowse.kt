@@ -23,10 +23,10 @@ import java.net.URI
 
 @Composable
 @Preview
-private fun CategoryBrowsePreview() = CategoryBrowse(onItemSelect = {})
+private fun CategoryBrowsePreview() = CategoryBrowse(onItemSelect = {_,_->})
 
 @Composable
-fun CategoryBrowse(onItemSelect: (AppListItem) -> Unit) {
+fun CategoryBrowse(onItemSelect: (String, AppListItem) -> Unit) {
     val categoryViewModel = remember {
         CategoryViewModel().apply { switchList(0) }
     }
@@ -95,7 +95,7 @@ fun CategoryBrowse(onItemSelect: (AppListItem) -> Unit) {
                         if (Desktop.isDesktopSupported() && Desktop.getDesktop()
                                 .isSupported(Desktop.Action.BROWSE)
                         ) {
-                            onItemSelect(item)
+                            onItemSelect(categoryViewModel.categories[categoryViewModel.currentIndex.value].first, item)
                         }
                     },
                     appIcon = item.icons,
