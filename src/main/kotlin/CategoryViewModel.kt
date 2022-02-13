@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 
 
-class MainViewModel {
+class CategoryViewModel {
     val appList = MutableStateFlow<List<AppListItem>>(listOf())
 
     val categories = listOf(
