@@ -49,6 +49,12 @@ fun getLastBuildNumber(): String {
     return reader.readLine().trim()
 }
 
+tasks.register("testBuildNumber") {
+    doLast {
+        println(getLastBuildNumber())
+    }
+}
+
 // 将appimage打包为deb。不使用官方的打包任务是为了方便控制打包细节。
 tasks.register("packageFinalDeb") {
     dependsOn(tasks.getByName("packageAppImage"))
@@ -80,7 +86,7 @@ tasks.register("packageFinalDeb") {
         val targetDebFile = "${project.buildDir}/top.ntutn.sparkcompose_${project.version}_${getLastBuildNumber()}_amd64.deb"
         println("目标文件$targetDebFile")
 
-        val packageCommand = "dpkg -b ${finalDebFile.absolutePath} ${project.buildDir.absolutePath}"
+        val packageCommand = "dpkg -b ${finalDebFile.absolutePath} ${targetDebFile}"
         println("执行命令 $packageCommand")
         val packageProcess = Runtime.getRuntime().exec(packageCommand)
         packageProcess.waitFor()
