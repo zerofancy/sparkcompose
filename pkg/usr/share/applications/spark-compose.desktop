@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Encoding=UTF-8
+Type=Application
+Categories=System;
+Exec=/opt/SparkCompose/bin/SparkCompose %u
+Icon=/opt/SparkCompose/spark-compose.svg
+Name=Spark Compose (unofficial)
+Name[zh_CN]=星火应用商店Compose版（非官方）
+Keywords=appstore;
+Terminal=false
+StartupNotify=true
+StartupWMClass=spark-compose
