@@ -1,3 +1,5 @@
+package util
+
 import com.google.gson.Gson
 import retrofit2.converter.gson.GsonConverterFactory
 
