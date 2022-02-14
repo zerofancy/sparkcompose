@@ -90,7 +90,7 @@ tasks.register("packageFinalDeb") {
             Maintainer: zerofancy
             Architecture: amd64
             Description: An unofficial spark client. Based on Jetpack Compose.
-            Depends: spark-dstore-patch
+            Depends: spark-dstore-patch, bash
             
         """.trimIndent() // don't remove the last empty line
         File(debianDir, "control").writeText(controlText)
