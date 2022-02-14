@@ -24,14 +24,16 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew packageFinalDeb
+    - name: Prepare Version Properties
+      run: cat version.properties >> $GITHUB_ENV
     - name: Publish prelease version
       if: ${{ github.event_name == 'push' }}
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
-        prerelease: true
-        title: "Development Build"
+        automatic_release_tag: "${{env.sparkcompose.version}}"
+        prerelease: false
+        title: "${{env.sparkcompose.version}}"
         files: |
           README.md
           LICENSE

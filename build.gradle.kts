@@ -3,14 +3,21 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.io.File
+import java.io.FileInputStream
+import java.util.*
 
 plugins {
     kotlin("jvm") version "1.5.31"
     id("org.jetbrains.compose") version "1.0.0"
 }
 
+val versionProperties = Properties().apply {
+    load(FileInputStream(File(rootProject.rootDir, "version.properties")))
+}
+
 group = "top.ntutn"
-version = "0.1.0"
+version = versionProperties.getProperty("sparkcompose.version")
 
 repositories {
     google()
@@ -48,7 +55,7 @@ compose.desktop {
                 targetFormats(TargetFormat.AppImage)
             }
             packageName = "SparkCompose"
-            packageVersion = "1.0.0"
+            packageVersion = project.version.toString()
         }
     }
 }
