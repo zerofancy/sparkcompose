@@ -10,18 +10,27 @@ plugins {
 }
 
 group = "top.ntutn"
-version = "0.0.1"
+version = "0.1.0"
 
 repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://jitpack.io")
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 }
 
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation(compose.desktop.currentOs)
+    implementation(fileTree(mapOf("dir" to "libs/compile", "include" to listOf("*.jar"))))
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-nop
+    implementation("org.slf4j:slf4j-nop:1.7.36")
+    implementation ("org.jetbrains.pty4j:pty4j:0.12.7")
+//    compileOnly(fileTree("libs/provided"))
+//    implementation("com.github.JetBrains.jediterm:jediterm-pty:a433301474")
+//    implementation("com.github.JetBrains.jediterm:jediterm-typeahead:a433301474")
 }
 
 tasks.withType<KotlinCompile> {
@@ -33,7 +42,11 @@ compose.desktop {
         mainClass = "MainKt"
         nativeDistributions {
             modules("java.sql")
-            targetFormats(TargetFormat.AppImage)
+            if (!org.apache.tools.ant.taskdefs.condition.Os.isFamily(org.apache.tools.ant.taskdefs.condition.Os.FAMILY_MAC)) {
+                // 有AppImage的target时macOS将无法运行（虽然目标不是macOS，但俺有时会用macOS debug）
+                // https://github.com/JetBrains/compose-jb/issues/793
+                targetFormats(TargetFormat.AppImage)
+            }
             packageName = "SparkCompose"
             packageVersion = "1.0.0"
         }
@@ -77,7 +90,7 @@ tasks.register("packageFinalDeb") {
             Maintainer: zerofancy
             Architecture: amd64
             Description: An unofficial spark client. Based on Jetpack Compose.
-            Depends: spark-dstore-patch
+            Depends: spark-dstore-patch, bash
             
         """.trimIndent() // don't remove the last empty line
         File(debianDir, "control").writeText(controlText)
