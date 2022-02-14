@@ -31,9 +31,9 @@ jobs:
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{env.sparkcompose.version}}"
+        automatic_release_tag: "${{env.sparkcompose_version}}"
         prerelease: false
-        title: "${{env.sparkcompose.version}}"
+        title: "${{env.sparkcompose_version}}"
         files: |
           README.md
           LICENSE

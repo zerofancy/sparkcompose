@@ -17,7 +17,7 @@ val versionProperties = Properties().apply {
 }
 
 group = "top.ntutn"
-version = versionProperties.getProperty("sparkcompose.version")
+version = versionProperties.getProperty("sparkcompose_version")
 
 repositories {
     google()
