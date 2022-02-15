@@ -1,4 +1,4 @@
-package api
+package top.ntutn.sparkcompose.api
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
