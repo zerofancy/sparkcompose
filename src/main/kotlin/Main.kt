@@ -28,7 +28,10 @@ fun App() {
                     TerminalWrapper(
                         modifier = Modifier.fillMaxWidth()
                             .height(300.dp),
-                        ttyConnectorFactory = { createTtyConnector() }
+                        ttyConnectorFactory = {
+                            ttyConnector = createTtyConnector()
+                            ttyConnector!!
+                        }
                     )
                 }
 
