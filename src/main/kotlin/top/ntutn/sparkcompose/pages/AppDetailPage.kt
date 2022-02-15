@@ -3,25 +3,31 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.jediterm.terminal.TtyConnector
+import kotlinx.coroutines.launch
 import top.ntutn.sparkcompose.api.AppListItem
 import top.ntutn.sparkcompose.util.GsonUtil
+import java.io.File
 
 @Composable
 @Preview
 private fun AppDetailPagePreview() = AppDetailPage("", AppListItem(), {})
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AppDetailPage(category: String, data: AppListItem, onBackPrevious: () -> Unit) {
+fun AppDetailPage(
+    category: String, data: AppListItem, onBackPrevious: () -> Unit, ttyConnector: TtyConnector? = null,
+    terminalState: BottomSheetScaffoldState? = null
+) {
     Column(modifier = Modifier.padding(16.dp)) {
         Button(onBackPrevious) {
             Text("返回")
@@ -62,10 +68,23 @@ fun AppDetailPage(category: String, data: AppListItem, onBackPrevious: () -> Uni
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
+            val coroutineScope = rememberCoroutineScope()
             Button(
                 onClick = {
                     tryOrNull {
-                        openUrlInBrowser("https://d.store.deepinos.org.cn/store/$category/${data.packageName}/${data.fileName}")
+                        coroutineScope.launch {
+                            if (terminalState?.bottomSheetState?.isCollapsed == true) {
+                                terminalState.bottomSheetState.expand()
+                            }
+                            File("/tmp/sparkcompose").mkdirs()
+                            ttyConnector?.write("cd /tmp/sparkcompose")
+                            ttyConnector?.write("\n")
+                            ttyConnector?.write("curl -o ${data.fileName} https://d.store.deepinos.org.cn/store/$category/${data.packageName}/${data.fileName}")
+                            ttyConnector?.write("\n")
+                            ttyConnector?.write("apt install ./${data.fileName}")
+                            ttyConnector?.write("\n")
+                        }
+//                        openUrlInBrowser("https://d.store.deepinos.org.cn/store/$category/${data.packageName}/${data.fileName}")
                     }
                 }
             ) {

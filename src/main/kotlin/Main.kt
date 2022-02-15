@@ -62,9 +62,10 @@ fun App() {
                         val detailData = remember { mutableStateOf<Pair<String, AppListItem>?>(null) }
                         val data = detailData.value
                         if (data != null) {
-                            AppDetailPage(data.first, data.second) {
+                            AppDetailPage(data.first, data.second, onBackPrevious = {
                                 detailData.value = null
-                            }
+                            }, ttyConnector = ttyConnector,
+                            terminalState = bottomSheetScaffoldState)
                         } else {
                             CategoryBrowse { category, item ->
                                 detailData.value = category to item
