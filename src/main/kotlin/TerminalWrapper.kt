@@ -57,9 +57,9 @@ fun createTtyConnector(): TtyConnector {
         if (UIUtil.isWindows) {
             command = arrayOf("cmd.exe")
         } else {
-            command = arrayOf("/bin/sh", "-c", "$(\$SHELL)", "--login")
             envs = HashMap(System.getenv())
             envs["TERM"] = "xterm-256color"
+            command = arrayOf(envs["SHELL"] ?: "/bin/sh", "--login")
         }
         val process: PtyProcess = PtyProcessBuilder()
             .setCommand(command)
