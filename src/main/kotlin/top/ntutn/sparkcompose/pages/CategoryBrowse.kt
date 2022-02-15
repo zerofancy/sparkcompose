@@ -18,9 +18,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import api.AppListItem
+import top.ntutn.sparkcompose.CategoryViewModel
+import top.ntutn.sparkcompose.api.AppListItem
 import java.awt.Desktop
-import java.net.URI
 
 @Composable
 @Preview

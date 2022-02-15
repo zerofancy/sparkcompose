@@ -1,4 +1,4 @@
-package util
+package top.ntutn.sparkcompose.util
 
 import com.google.gson.Gson
 import retrofit2.converter.gson.GsonConverterFactory

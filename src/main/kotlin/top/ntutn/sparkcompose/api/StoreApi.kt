@@ -1,4 +1,4 @@
-package api
+package top.ntutn.sparkcompose.api
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
@@ -14,29 +14,29 @@ interface StoreApi {
 
 data class AppListItem(
     @SerializedName("Name")
-    val name: String = "Name",
+    val name: String = "",
     @SerializedName("Version")
-    val version: String = "Version",
+    val version: String = "",
     @SerializedName("Filename")
-    val fileName: String = "Filename",
+    val fileName: String = "",
     @SerializedName("Pkgname")
-    val packageName: String = "Pkgname",
+    val packageName: String = "",
     @SerializedName("Author")
-    val author: String = "Author",
+    val author: String = "",
     @SerializedName("Contributor")
-    val contributor: String = "Contributor",
+    val contributor: String = "",
     @SerializedName("Website")
-    val website: String = "Website",
+    val website: String = "",
     @SerializedName("Update")
-    val updateTime: String = "Update",
+    val updateTime: String = "",
     @SerializedName("Size")
-    val size: String = "Size",
+    val size: String = "",
     @SerializedName("More")
-    val description: String = "More",
+    val description: String = "",
     @SerializedName("Tags")
-    val tags: String = "Tags",
+    val tags: String = "",
     @SerializedName("img_urls")
-    val imageUrls: String = "img_urls",
+    val imageUrls: String = "",
     @SerializedName("icons")
-    val icons: String = "icons",
+    val icons: String = "",
 )

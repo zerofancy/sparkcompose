@@ -1,15 +1,18 @@
-import api.AppListItem
-import api.StoreApi
+package top.ntutn.sparkcompose
+
+import top.ntutn.sparkcompose.api.AppListItem
+import top.ntutn.sparkcompose.api.StoreApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
-import util.GsonUtil
+import top.ntutn.sparkcompose.arch.IViewModel
+import top.ntutn.sparkcompose.util.GsonUtil
 
 
-class CategoryViewModel {
+class CategoryViewModel: IViewModel {
     val appList = MutableStateFlow<List<AppListItem>>(listOf())
 
     val categories = listOf(
