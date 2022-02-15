@@ -1,10 +1,13 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -12,6 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import api.AppListItem
+import util.GsonUtil
 
 @Composable
 @Preview
@@ -70,6 +74,28 @@ fun AppDetailPage(category: String, data: AppListItem, onBackPrevious: () -> Uni
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(modifier = Modifier.fillMaxWidth().wrapContentHeight(), text = data.description)
+        val imageURLs = remember { tryOrNull { GsonUtil.gson.fromJson(data.imageUrls, Array<String>::class.java) } }
+        LazyColumn {
+            item {
+                LazyRow(modifier = Modifier.height(300.dp)) {
+                    imageURLs?.forEach {
+                        item {
+                            AsyncImage(
+                                key = it,
+                                load = ::loadImageBitmap,
+                                painterFor = {
+                                    BitmapPainter(it!!)
+                                },
+                                contentDescription = "预览图"
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                    }
+                }
+            }
+            item {
+                Text(modifier = Modifier.fillMaxWidth().wrapContentHeight(), text = data.description)
+            }
+        }
     }
 }
