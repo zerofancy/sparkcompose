@@ -11,10 +11,12 @@ import androidx.compose.ui.window.application
 import top.ntutn.sparkcompose.api.AppListItem
 import com.jediterm.terminal.TtyConnector
 import kotlinx.coroutines.launch
+import top.ntutn.sparkcompose.MainViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun App() {
+    val mainViewModel = remember { MainViewModel() }
     MaterialTheme {
         val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
             bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
@@ -24,16 +26,13 @@ fun App() {
         Row {
             Column {
                 Text("Spark Compose")
+                val mainTabNames = remember { listOf("首页", "分类", "关于") }
                 LazyColumn(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                    item {
-                        TextButton(onClick = {}) {
-                            Text("首页")
-                        }
-                        TextButton(onClick = {}) {
-                            Text("分类")
-                        }
-                        TextButton(onClick = {}) {
-                            Text("关于")
+                    items(3) { index ->
+                        TextButton(onClick = {
+                            mainViewModel.currentTab.value = index
+                        }) {
+                            Text(mainTabNames[index])
                         }
                     }
                 }
