@@ -18,6 +18,7 @@ import top.ntutn.sparkcompose.api.AppListItem
 import top.ntutn.sparkcompose.util.GsonUtil
 import java.io.File
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 private fun AppDetailPagePreview() = AppDetailPage("", AppListItem(), {})
