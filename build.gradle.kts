@@ -9,7 +9,7 @@ import java.util.*
 
 plugins {
     kotlin("jvm") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0"
+    id("org.jetbrains.compose") version "1.1.0"
 }
 
 val versionProperties = Properties().apply {
