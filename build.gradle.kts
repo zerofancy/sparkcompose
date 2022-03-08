@@ -8,7 +8,7 @@ import java.io.FileInputStream
 import java.util.*
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
     id("org.jetbrains.compose") version "1.1.0"
 }
 
